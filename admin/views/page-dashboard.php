@@ -18,6 +18,21 @@ $base_url = admin_url( 'admin.php?page=ial-dashboard' );
 
 	<h1><?php esc_html_e( 'Activity Log — Dashboard', 'internal-activity-log' ); ?></h1>
 
+	<!-- ── Date-independent stat cards (always show current totals) ────── -->
+	<div class="ial-stats-grid ial-stats-grid--top">
+
+		<div class="ial-stat-card">
+			<div class="ial-stat-label"><?php esc_html_e( 'Total Events (all time)', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['total_events'] ) ); ?></div>
+		</div>
+
+		<div class="ial-stat-card">
+			<div class="ial-stat-label"><?php esc_html_e( 'Active Users Today', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['active_today'] ) ); ?></div>
+		</div>
+
+	</div><!-- .ial-stats-grid--top -->
+
 	<!-- ── Date range bar ──────────────────────────────────────────────── -->
 	<div class="ial-date-bar">
 
@@ -70,21 +85,11 @@ $base_url = admin_url( 'admin.php?page=ial-dashboard' );
 		?>
 	</p>
 
-	<!-- ── Stat cards ──────────────────────────────────────────────────── -->
-	<div class="ial-stats-grid">
+	<!-- ── Date-dependent stat card ────────────────────────────────────── -->
+	<div class="ial-stats-grid ial-stats-grid--range">
 
 		<div class="ial-stat-card">
-			<div class="ial-stat-label"><?php esc_html_e( 'Total Events (all time)', 'internal-activity-log' ); ?></div>
-			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['total_events'] ) ); ?></div>
-		</div>
-
-		<div class="ial-stat-card">
-			<div class="ial-stat-label"><?php esc_html_e( 'Active Users Today', 'internal-activity-log' ); ?></div>
-			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['active_today'] ) ); ?></div>
-		</div>
-
-		<div class="ial-stat-card">
-			<div class="ial-stat-label"><?php esc_html_e( 'Most Active (selected range)', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-label"><?php esc_html_e( 'Most Active User (selected range)', 'internal-activity-log' ); ?></div>
 			<?php if ( $stats['most_active_user'] ) : ?>
 				<div class="ial-stat-value ial-stat-value--sm">
 					<?php echo esc_html( $stats['most_active_user']['username'] ); ?>
@@ -105,7 +110,7 @@ $base_url = admin_url( 'admin.php?page=ial-dashboard' );
 			<?php endif; ?>
 		</div>
 
-	</div><!-- .ial-stats-grid -->
+	</div><!-- .ial-stats-grid--range -->
 
 	<!-- ── Charts ──────────────────────────────────────────────────────── -->
 	<div class="ial-charts-grid">
