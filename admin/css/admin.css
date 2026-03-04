@@ -94,9 +94,6 @@
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	padding: 20px 24px;
-	min-height: 300px;
-	display: flex;
-	flex-direction: column;
 }
 
 .ial-chart-card h3 {
@@ -106,13 +103,22 @@
 	color: #1d2327;
 }
 
-.ial-chart-card canvas {
-	flex: 1;
+/*
+ * Chart.js requires a `position: relative` parent with a FIXED height.
+ * Using flex: 1 or min-height on the canvas parent causes an infinite
+ * resize loop where Chart.js keeps expanding to fill a growing container.
+ */
+.ial-chart-container {
+	position: relative;
+	height: 280px;
+}
+
+.ial-chart-container--short {
+	height: 200px;
 }
 
 .ial-chart-card--wide {
 	grid-column: span 2;
-	min-height: 220px;
 }
 
 /* --------------------------------------------------------------------------

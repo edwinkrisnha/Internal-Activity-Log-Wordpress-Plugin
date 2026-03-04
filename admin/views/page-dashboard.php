@@ -57,19 +57,25 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Bar: Top 10 users -->
 		<div class="ial-chart-card">
 			<h3><?php esc_html_e( 'Most Active Users', 'internal-activity-log' ); ?></h3>
-			<canvas id="ial-chart-top-users" height="260" aria-label="<?php esc_attr_e( 'Most active users bar chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			<div class="ial-chart-container">
+				<canvas id="ial-chart-top-users" aria-label="<?php esc_attr_e( 'Most active users bar chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			</div>
 		</div>
 
 		<!-- Doughnut: Events by action type -->
 		<div class="ial-chart-card">
 			<h3><?php esc_html_e( 'Events by Action Type', 'internal-activity-log' ); ?></h3>
-			<canvas id="ial-chart-actions" height="260" aria-label="<?php esc_attr_e( 'Events by action type doughnut chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			<div class="ial-chart-container">
+				<canvas id="ial-chart-actions" aria-label="<?php esc_attr_e( 'Events by action type doughnut chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			</div>
 		</div>
 
 		<!-- Line: Daily activity -->
 		<div class="ial-chart-card ial-chart-card--wide">
 			<h3><?php esc_html_e( 'Daily Activity (Last 30 Days)', 'internal-activity-log' ); ?></h3>
-			<canvas id="ial-chart-daily" height="120" aria-label="<?php esc_attr_e( 'Daily activity line chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			<div class="ial-chart-container ial-chart-container--short">
+				<canvas id="ial-chart-daily" aria-label="<?php esc_attr_e( 'Daily activity line chart', 'internal-activity-log' ); ?>" role="img"></canvas>
+			</div>
 		</div>
 
 	</div><!-- .ial-charts-grid -->

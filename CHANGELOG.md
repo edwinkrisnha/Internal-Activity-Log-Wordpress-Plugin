@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] — 2026-03-04
+
+### Fixed
+- Dashboard charts expanded infinitely on load. Root cause: Chart.js `responsive` mode reads the canvas parent's dimensions; the parent (`.ial-chart-card`) used `min-height` + `flex: 1` on the canvas, so each resize made the container taller, triggering another resize loop. Fixed by wrapping each canvas in a `position: relative` div (`.ial-chart-container`) with a fixed pixel height, which gives Chart.js a stable, immutable boundary.
+
 ## [1.0.0] — 2026-03-04
 
 ### Added
