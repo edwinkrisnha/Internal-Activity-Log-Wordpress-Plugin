@@ -27,6 +27,28 @@ $base_url = admin_url( 'admin.php?page=ial-dashboard' );
 		</div>
 
 		<div class="ial-stat-card">
+			<div class="ial-stat-label"><?php esc_html_e( 'Most Active User (all time)', 'internal-activity-log' ); ?></div>
+			<?php if ( $stats['most_active_user_all_time'] ) : ?>
+				<div class="ial-stat-value ial-stat-value--sm">
+					<?php echo esc_html( $stats['most_active_user_all_time']['username'] ); ?>
+				</div>
+				<div class="ial-stat-sub">
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: %s: number of events */
+							_n( '%s event', '%s events', (int) $stats['most_active_user_all_time']['event_count'], 'internal-activity-log' ),
+							number_format_i18n( (int) $stats['most_active_user_all_time']['event_count'] )
+						)
+					);
+					?>
+				</div>
+			<?php else : ?>
+				<div class="ial-stat-value">—</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="ial-stat-card">
 			<div class="ial-stat-label"><?php esc_html_e( 'Active Users Today', 'internal-activity-log' ); ?></div>
 			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['active_today'] ) ); ?></div>
 		</div>
@@ -85,8 +107,13 @@ $base_url = admin_url( 'admin.php?page=ial-dashboard' );
 		?>
 	</p>
 
-	<!-- ── Date-dependent stat card ────────────────────────────────────── -->
+	<!-- ── Date-dependent stat cards ───────────────────────────────────── -->
 	<div class="ial-stats-grid ial-stats-grid--range">
+
+		<div class="ial-stat-card">
+			<div class="ial-stat-label"><?php esc_html_e( 'Total Events (selected range)', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['total_events_in_range'] ) ); ?></div>
+		</div>
 
 		<div class="ial-stat-card">
 			<div class="ial-stat-label"><?php esc_html_e( 'Most Active User (selected range)', 'internal-activity-log' ); ?></div>

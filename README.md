@@ -11,11 +11,14 @@ A WordPress plugin that tracks user activity and displays it as interactive char
   - Comments posted, trashed, spammed, unspammed
   - Plugins activated and deactivated
   - Settings/options updated (admin-side only, deduplicated)
-- **Dashboard with Chart.js charts**
-  - Horizontal bar chart — top 10 most active users (last 30 days)
-  - Line chart — daily event volume (last 30 days, zero-filled)
-  - Doughnut chart — event breakdown by action type
-  - Stat cards — total events, active users today, most active user
+- **Dashboard with date range filtering**
+  - Six quick-access preset buttons: Last 7 / 14 / 30 / 90 days, This month, This year
+  - Custom from/to date picker; active preset is highlighted; range capped at 366 days
+  - Date-independent stat cards (always show current totals): Total Events (all time), Most Active User (all time), Active Users Today
+  - Date-dependent stat cards (reflect selected range): Total Events (selected range), Most Active User (selected range)
+  - Horizontal bar chart — top 10 most active users in the selected range
+  - Line chart — daily event volume for the selected range (zero-filled)
+  - Doughnut chart — event breakdown by action type for the selected range
 - **Full log table** — paginated `WP_List_Table` with filters by user ID, action type, and date range
 - **Data stored in a dedicated custom DB table** (`wp_activity_log`) with indexes for fast querying
 

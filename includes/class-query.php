@@ -41,6 +41,38 @@ class IAL_Query {
 		);
 	}
 
+	/** Single most-active user of all time, or null if no data. */
+	public static function most_active_user_all_time(): ?array {
+		global $wpdb;
+		$table = self::table();
+
+		$row = $wpdb->get_row(
+			"SELECT user_id, username, COUNT(*) AS event_count
+			 FROM `{$table}`
+			 WHERE user_id > 0
+			 GROUP BY user_id, username
+			 ORDER BY event_count DESC
+			 LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			ARRAY_A
+		);
+
+		return $row ?: null;
+	}
+
+	/** Total events within the given date range. */
+	public static function total_events_in_range( string $date_from, string $date_to ): int {
+		global $wpdb;
+		$table = self::table();
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM `{$table}` WHERE created_at >= %s AND created_at <= %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$date_from . ' 00:00:00',
+				$date_to   . ' 23:59:59'
+			)
+		);
+	}
+
 	/** Single most-active user within the given date range, or null if no data. */
 	public static function most_active_user( string $date_from, string $date_to ): ?array {
 		global $wpdb;

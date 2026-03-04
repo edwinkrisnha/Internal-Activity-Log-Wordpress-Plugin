@@ -169,9 +169,11 @@ class IAL_Admin {
 
 		$range = self::resolve_date_range();
 		$stats = [
-			'total_events'     => IAL_Query::total_events(),
-			'active_today'     => IAL_Query::active_users_today(),
-			'most_active_user' => IAL_Query::most_active_user( $range['date_from'], $range['date_to'] ),
+			'total_events'            => IAL_Query::total_events(),
+			'active_today'            => IAL_Query::active_users_today(),
+			'most_active_user_all_time' => IAL_Query::most_active_user_all_time(),
+			'total_events_in_range'   => IAL_Query::total_events_in_range( $range['date_from'], $range['date_to'] ),
+			'most_active_user'        => IAL_Query::most_active_user( $range['date_from'], $range['date_to'] ),
 		];
 
 		include IAL_PLUGIN_DIR . 'admin/views/page-dashboard.php';

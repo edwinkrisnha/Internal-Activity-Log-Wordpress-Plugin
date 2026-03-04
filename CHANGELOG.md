@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.3] — 2026-03-04
+
+### Added
+- Dashboard stat cards are now split into two tiers:
+  - **Date-independent** (always show current totals, displayed above the date filter): Total Events (all time), Most Active User (all time), Active Users Today.
+  - **Date-dependent** (reflect the selected range, displayed below the filter): Total Events (selected range), Most Active User (selected range).
+- New stat card: **Most Active User (all time)** — shows the all-time top user with their total event count.
+- New stat card: **Total Events (selected range)** — event count scoped to the current date filter.
+- `IAL_Query::most_active_user_all_time()` — returns the single highest-event-count user across all recorded data.
+- `IAL_Query::total_events_in_range(string $date_from, string $date_to)` — returns total event count for a specific date window.
+- CSS grid variants: `.ial-stats-grid--top` (3-column, collapses to 2 → 1 at narrow viewports) and `.ial-stats-grid--range` (2-column).
+
 ## [1.0.2] — 2026-03-04
 
 ### Added

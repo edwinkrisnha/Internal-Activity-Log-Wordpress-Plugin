@@ -108,16 +108,22 @@
 	gap: 16px;
 }
 
-/* Two date-independent cards above the filter */
+/* Three date-independent cards above the filter */
 .ial-stats-grid--top {
-	grid-template-columns: repeat( 2, minmax( 0, 280px ) );
-	margin: 20px 0 16px;
+	grid-template-columns: repeat( 3, minmax( 0, 280px ) );
+	margin: 20px 0 50px;
 }
 
-/* Single date-dependent card below the filter */
+/* Two date-dependent cards below the filter */
 .ial-stats-grid--range {
-	grid-template-columns: minmax( 0, 280px );
+	grid-template-columns: repeat( 2, minmax( 0, 280px ) );
 	margin: 16px 0 24px;
+}
+
+@media ( max-width: 900px ) {
+	.ial-stats-grid--top {
+		grid-template-columns: repeat( 2, minmax( 0, 280px ) );
+	}
 }
 
 @media ( max-width: 600px ) {
