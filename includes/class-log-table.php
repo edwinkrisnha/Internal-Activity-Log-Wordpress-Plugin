@@ -22,10 +22,10 @@ class IAL_Log_Table extends WP_List_Table {
 
 		// Validate and capture filter values from the request
 		$this->filters = array_filter( [
-			'user_id'   => isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0, // phpcs:ignore
-			'action'    => sanitize_key( $_GET['action_filter'] ?? '' ),                // phpcs:ignore
-			'date_from' => sanitize_text_field( $_GET['date_from'] ?? '' ),              // phpcs:ignore
-			'date_to'   => sanitize_text_field( $_GET['date_to'] ?? '' ),                // phpcs:ignore
+			'username'  => sanitize_text_field( wp_unslash( $_GET['username'] ?? '' ) ), // phpcs:ignore
+			'action'    => sanitize_key( $_GET['action_filter'] ?? '' ),                  // phpcs:ignore
+			'date_from' => sanitize_text_field( $_GET['date_from'] ?? '' ),               // phpcs:ignore
+			'date_to'   => sanitize_text_field( $_GET['date_to'] ?? '' ),                 // phpcs:ignore
 		] );
 	}
 
@@ -94,7 +94,7 @@ class IAL_Log_Table extends WP_List_Table {
 		}
 
 		$url = add_query_arg(
-			[ 'page' => 'ial-log', 'user_id' => $item['user_id'] ],
+			[ 'page' => 'ial-log', 'username' => $item['username'] ],
 			admin_url( 'admin.php' )
 		);
 

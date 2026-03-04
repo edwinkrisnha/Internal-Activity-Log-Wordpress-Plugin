@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.4] — 2026-03-04
+
+### Changed
+- Log page: replaced the **User ID** number input with a **Username** text input. Filtering now matches by exact username stored in the log; clicking a username in the table still filters to that user.
+- Log page: all filter controls (username, action, date from, date to) now **auto-submit on change** — no need to click a Filter button. The Filter button has been removed; the Clear button remains.
+
+### Fixed
+- Pagination hidden-field loop now forwards `username` instead of the old `user_id` parameter, so username filters survive page navigation.
+
 ## [1.0.3] — 2026-03-04
 
 ### Added

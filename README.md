@@ -19,7 +19,7 @@ A WordPress plugin that tracks user activity and displays it as interactive char
   - Horizontal bar chart — top 10 most active users in the selected range
   - Line chart — daily event volume for the selected range (zero-filled)
   - Doughnut chart — event breakdown by action type for the selected range
-- **Full log table** — paginated `WP_List_Table` with filters by user ID, action type, and date range
+- **Full log table** — paginated `WP_List_Table` with filters by username, action type, and date range; all filters auto-apply on change
 - **Data stored in a dedicated custom DB table** (`wp_activity_log`) with indexes for fast querying
 
 ## Requirements

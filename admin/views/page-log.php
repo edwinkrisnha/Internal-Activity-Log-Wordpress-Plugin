@@ -11,37 +11,36 @@ $actions     = IAL_Query::distinct_actions();
 $action_labels = IAL_Admin::action_labels();
 
 // Current filter values for repopulating the form
-$current_user_id   = isset( $_GET['user_id'] )      ? absint( $_GET['user_id'] )                     : ''; // phpcs:ignore
-$current_action    = isset( $_GET['action_filter'] ) ? sanitize_key( $_GET['action_filter'] )         : ''; // phpcs:ignore
-$current_date_from = isset( $_GET['date_from'] )     ? sanitize_text_field( $_GET['date_from'] )      : ''; // phpcs:ignore
-$current_date_to   = isset( $_GET['date_to'] )       ? sanitize_text_field( $_GET['date_to'] )        : ''; // phpcs:ignore
+$current_username  = isset( $_GET['username'] )      ? sanitize_text_field( wp_unslash( $_GET['username'] ) ) : ''; // phpcs:ignore
+$current_action    = isset( $_GET['action_filter'] ) ? sanitize_key( $_GET['action_filter'] )                  : ''; // phpcs:ignore
+$current_date_from = isset( $_GET['date_from'] )     ? sanitize_text_field( $_GET['date_from'] )               : ''; // phpcs:ignore
+$current_date_to   = isset( $_GET['date_to'] )       ? sanitize_text_field( $_GET['date_to'] )                 : ''; // phpcs:ignore
 ?>
 <div class="wrap ial-wrap">
 
 	<h1><?php esc_html_e( 'Activity Log', 'internal-activity-log' ); ?></h1>
 
 	<!-- ── Filters ─────────────────────────────────────────────────────── -->
-	<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
+	<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" id="ial-filter-form">
 		<input type="hidden" name="page" value="ial-log">
 
 		<div class="ial-filters">
 
 			<div class="ial-filter-group">
-				<label for="ial-filter-user"><?php esc_html_e( 'User ID', 'internal-activity-log' ); ?></label>
+				<label for="ial-filter-user"><?php esc_html_e( 'Username', 'internal-activity-log' ); ?></label>
 				<input
-					type="number"
+					type="text"
 					id="ial-filter-user"
-					name="user_id"
-					value="<?php echo esc_attr( $current_user_id ); ?>"
+					name="username"
+					value="<?php echo esc_attr( $current_username ); ?>"
 					placeholder="<?php esc_attr_e( 'Any', 'internal-activity-log' ); ?>"
-					min="1"
-					style="width:80px;"
+					style="width:120px;"
 				>
 			</div>
 
 			<div class="ial-filter-group">
 				<label for="ial-filter-action"><?php esc_html_e( 'Action', 'internal-activity-log' ); ?></label>
-				<select id="ial-filter-action" name="action_filter">
+				<select id="ial-filter-action" name="action_filter" onchange="this.form.submit()">
 					<option value=""><?php esc_html_e( 'All actions', 'internal-activity-log' ); ?></option>
 					<?php foreach ( $actions as $slug ) : ?>
 						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $current_action, $slug ); ?>>
@@ -58,6 +57,7 @@ $current_date_to   = isset( $_GET['date_to'] )       ? sanitize_text_field( $_GE
 					id="ial-filter-from"
 					name="date_from"
 					value="<?php echo esc_attr( $current_date_from ); ?>"
+					onchange="this.form.submit()"
 				>
 			</div>
 
@@ -68,12 +68,12 @@ $current_date_to   = isset( $_GET['date_to'] )       ? sanitize_text_field( $_GE
 					id="ial-filter-to"
 					name="date_to"
 					value="<?php echo esc_attr( $current_date_to ); ?>"
+					onchange="this.form.submit()"
 				>
 			</div>
 
 			<div class="ial-filter-group ial-filter-group--actions">
-				<?php submit_button( __( 'Filter', 'internal-activity-log' ), 'secondary', 'filter_action', false ); ?>
-				<?php if ( $current_user_id || $current_action || $current_date_from || $current_date_to ) : ?>
+				<?php if ( $current_username || $current_action || $current_date_from || $current_date_to ) : ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=ial-log' ) ); ?>" class="button">
 						<?php esc_html_e( 'Clear', 'internal-activity-log' ); ?>
 					</a>
@@ -82,13 +82,18 @@ $current_date_to   = isset( $_GET['date_to'] )       ? sanitize_text_field( $_GE
 
 		</div><!-- .ial-filters -->
 	</form>
+	<script>
+	document.getElementById( 'ial-filter-user' ).addEventListener( 'change', function () {
+		this.form.submit();
+	} );
+	</script>
 
 	<!-- ── Table ────────────────────────────────────────────────────────── -->
 	<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
 		<input type="hidden" name="page" value="ial-log">
 		<?php
 		// Persist active filters across pagination
-		foreach ( [ 'user_id', 'action_filter', 'date_from', 'date_to' ] as $key ) {
+		foreach ( [ 'username', 'action_filter', 'date_from', 'date_to' ] as $key ) {
 			if ( ! empty( $_GET[ $key ] ) ) { // phpcs:ignore
 				printf(
 					'<input type="hidden" name="%s" value="%s">',

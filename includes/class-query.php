@@ -211,9 +211,9 @@ class IAL_Query {
 		$where  = [ '1=1' ];
 		$values = [];
 
-		if ( ! empty( $filters['user_id'] ) ) {
-			$where[]  = 'user_id = %d';
-			$values[] = (int) $filters['user_id'];
+		if ( ! empty( $filters['username'] ) ) {
+			$where[]  = 'username = %s';
+			$values[] = $filters['username'];
 		}
 
 		if ( ! empty( $filters['action'] ) ) {
