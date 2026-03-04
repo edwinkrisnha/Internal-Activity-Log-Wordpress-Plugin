@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.2] — 2026-03-04
+
+### Added
+- Dashboard date range picker with six quick-access presets (Last 7 / 14 / 30 / 90 days, This month, This year) and a custom from/to date input form.
+- Active preset is highlighted on the button bar after selection.
+- Subtitle now shows the active date range instead of a hardcoded "Last 30 days" string.
+- `IAL_Admin::resolve_date_range()` — central helper that reads, validates, and caps the GET date params; defaults to last 30 days when absent.
+
+### Changed
+- All dashboard chart queries (`top_users`, `daily_activity`, `events_by_action`, `most_active_user`) now accept explicit `$date_from` / `$date_to` strings instead of a `$days` integer, making the range fully user-controlled.
+- `daily_activity` zero-fill now iterates the actual selected date range rather than a fixed rolling window.
+
 ## [1.0.1] — 2026-03-04
 
 ### Fixed

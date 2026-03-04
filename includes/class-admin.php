@@ -53,6 +53,63 @@ class IAL_Admin {
 	}
 
 	// -------------------------------------------------------------------------
+	// Date range resolver
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Parse and validate date_from / date_to from the current GET request.
+	 *
+	 * Rules:
+	 *  - Defaults to last 30 days when params are absent or invalid.
+	 *  - Swaps from/to if they are reversed.
+	 *  - Caps the range at 366 days to prevent runaway queries.
+	 *
+	 * @return array{ date_from: string, date_to: string, presets: array }
+	 */
+	public static function resolve_date_range(): array {
+		$today = gmdate( 'Y-m-d' );
+
+		$from = sanitize_text_field( wp_unslash( $_GET['date_from'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$to   = sanitize_text_field( wp_unslash( $_GET['date_to']   ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification
+
+		$is_valid_date = static fn( string $d ): bool =>
+			(bool) preg_match( '/^\d{4}-\d{2}-\d{2}$/', $d ) && false !== strtotime( $d );
+
+		if ( ! $is_valid_date( $from ) ) {
+			$from = gmdate( 'Y-m-d', strtotime( '-29 days' ) ); // last 30 days inclusive
+		}
+		if ( ! $is_valid_date( $to ) ) {
+			$to = $today;
+		}
+
+		// Ensure chronological order
+		if ( $from > $to ) {
+			[ $from, $to ] = [ $to, $from ];
+		}
+
+		// Hard cap: no more than 366 days in one query
+		if ( ( strtotime( $to ) - strtotime( $from ) ) > ( 366 * DAY_IN_SECONDS ) ) {
+			$from = gmdate( 'Y-m-d', strtotime( $to ) - ( 366 * DAY_IN_SECONDS ) );
+		}
+
+		// Quick-access presets (PHP-generated so dates are always relative to today)
+		$presets = [
+			[ 'key' => '7d',         'label' => __( 'Last 7 days',  'internal-activity-log' ), 'from' => gmdate( 'Y-m-d', strtotime( '-6 days' ) ),  'to' => $today ],
+			[ 'key' => '14d',        'label' => __( 'Last 14 days', 'internal-activity-log' ), 'from' => gmdate( 'Y-m-d', strtotime( '-13 days' ) ), 'to' => $today ],
+			[ 'key' => '30d',        'label' => __( 'Last 30 days', 'internal-activity-log' ), 'from' => gmdate( 'Y-m-d', strtotime( '-29 days' ) ), 'to' => $today ],
+			[ 'key' => '90d',        'label' => __( 'Last 90 days', 'internal-activity-log' ), 'from' => gmdate( 'Y-m-d', strtotime( '-89 days' ) ), 'to' => $today ],
+			[ 'key' => 'this_month', 'label' => __( 'This month',   'internal-activity-log' ), 'from' => gmdate( 'Y-m-01' ),                         'to' => $today ],
+			[ 'key' => 'this_year',  'label' => __( 'This year',    'internal-activity-log' ), 'from' => gmdate( 'Y-01-01' ),                        'to' => $today ],
+		];
+
+		return [
+			'date_from' => $from,
+			'date_to'   => $to,
+			'presets'   => $presets,
+		];
+	}
+
+	// -------------------------------------------------------------------------
 	// Assets
 	// -------------------------------------------------------------------------
 
@@ -88,14 +145,14 @@ class IAL_Admin {
 
 		// Pass chart data for the dashboard page only
 		if ( 'toplevel_page_ial-dashboard' === $hook ) {
-			$days = 30;
+			$range = self::resolve_date_range();
 			wp_localize_script(
 				'ial-dashboard-js',
 				'ialData',
 				[
-					'topUsers'      => IAL_Query::top_users( 10, $days ),
-					'dailyActivity' => IAL_Query::daily_activity( $days ),
-					'byAction'      => IAL_Query::events_by_action( $days ),
+					'topUsers'      => IAL_Query::top_users( 10, $range['date_from'], $range['date_to'] ),
+					'dailyActivity' => IAL_Query::daily_activity( $range['date_from'], $range['date_to'] ),
+					'byAction'      => IAL_Query::events_by_action( $range['date_from'], $range['date_to'] ),
 				]
 			);
 		}
@@ -110,11 +167,11 @@ class IAL_Admin {
 			wp_die( esc_html__( 'You do not have permission to view this page.', 'internal-activity-log' ) );
 		}
 
-		$days  = 30;
+		$range = self::resolve_date_range();
 		$stats = [
 			'total_events'     => IAL_Query::total_events(),
 			'active_today'     => IAL_Query::active_users_today(),
-			'most_active_user' => IAL_Query::most_active_user( $days ),
+			'most_active_user' => IAL_Query::most_active_user( $range['date_from'], $range['date_to'] ),
 		];
 
 		include IAL_PLUGIN_DIR . 'admin/views/page-dashboard.php';

@@ -16,11 +16,6 @@ class IAL_Query {
 		return $wpdb->prefix . IAL_TABLE_NAME;
 	}
 
-	/** Return a UTC datetime string N days in the past. */
-	private static function since( int $days ): string {
-		return gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
-	}
-
 	// -------------------------------------------------------------------------
 	// Dashboard stats
 	// -------------------------------------------------------------------------
@@ -46,8 +41,8 @@ class IAL_Query {
 		);
 	}
 
-	/** Single most-active user in the last $days days, or null if no data. */
-	public static function most_active_user( int $days = 30 ): ?array {
+	/** Single most-active user within the given date range, or null if no data. */
+	public static function most_active_user( string $date_from, string $date_to ): ?array {
 		global $wpdb;
 		$table = self::table();
 
@@ -55,11 +50,12 @@ class IAL_Query {
 			$wpdb->prepare(
 				"SELECT user_id, username, COUNT(*) AS event_count
 				 FROM `{$table}`
-				 WHERE created_at >= %s AND user_id > 0
+				 WHERE created_at >= %s AND created_at <= %s AND user_id > 0
 				 GROUP BY user_id, username
 				 ORDER BY event_count DESC
 				 LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				self::since( $days )
+				$date_from . ' 00:00:00',
+				$date_to   . ' 23:59:59'
 			),
 			ARRAY_A
 		);
@@ -72,11 +68,11 @@ class IAL_Query {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Top N users by event count over the last $days days.
+	 * Top N users by event count within the given date range.
 	 *
 	 * @return array<array{user_id: string, username: string, event_count: string}>
 	 */
-	public static function top_users( int $limit = 10, int $days = 30 ): array {
+	public static function top_users( int $limit, string $date_from, string $date_to ): array {
 		global $wpdb;
 		$table = self::table();
 
@@ -84,11 +80,12 @@ class IAL_Query {
 			$wpdb->prepare(
 				"SELECT user_id, username, COUNT(*) AS event_count
 				 FROM `{$table}`
-				 WHERE created_at >= %s AND user_id > 0
+				 WHERE created_at >= %s AND created_at <= %s AND user_id > 0
 				 GROUP BY user_id, username
 				 ORDER BY event_count DESC
 				 LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				self::since( $days ),
+				$date_from . ' 00:00:00',
+				$date_to   . ' 23:59:59',
 				$limit
 			),
 			ARRAY_A
@@ -96,11 +93,11 @@ class IAL_Query {
 	}
 
 	/**
-	 * Daily event counts for the last $days days, with zero-fill for missing days.
+	 * Daily event counts within the given date range, zero-filled for missing days.
 	 *
 	 * @return array<array{day: string, event_count: int}>
 	 */
-	public static function daily_activity( int $days = 30 ): array {
+	public static function daily_activity( string $date_from, string $date_to ): array {
 		global $wpdb;
 		$table = self::table();
 
@@ -108,36 +105,40 @@ class IAL_Query {
 			$wpdb->prepare(
 				"SELECT DATE(created_at) AS day, COUNT(*) AS event_count
 				 FROM `{$table}`
-				 WHERE created_at >= %s
+				 WHERE created_at >= %s AND created_at <= %s
 				 GROUP BY DATE(created_at)
 				 ORDER BY day ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				self::since( $days )
+				$date_from . ' 00:00:00',
+				$date_to   . ' 23:59:59'
 			),
 			ARRAY_A
 		) ?: [];
 
-		// Index by date for fast lookup
 		$by_day = array_column( $rows, 'event_count', 'day' );
 
-		// Build a complete date range, filling gaps with 0
-		$result = [];
-		for ( $i = $days - 1; $i >= 0; $i-- ) {
-			$date     = gmdate( 'Y-m-d', strtotime( "-{$i} days" ) );
+		// Walk every calendar day in the range, filling gaps with 0
+		$result  = [];
+		$current = strtotime( $date_from );
+		$end     = strtotime( $date_to );
+
+		while ( $current <= $end ) {
+			$date     = gmdate( 'Y-m-d', $current );
 			$result[] = [
 				'day'         => $date,
 				'event_count' => (int) ( $by_day[ $date ] ?? 0 ),
 			];
+			$current = strtotime( '+1 day', $current );
 		}
 
 		return $result;
 	}
 
 	/**
-	 * Event counts grouped by action type for the last $days days.
+	 * Event counts grouped by action type within the given date range.
 	 *
 	 * @return array<array{action: string, event_count: string}>
 	 */
-	public static function events_by_action( int $days = 30 ): array {
+	public static function events_by_action( string $date_from, string $date_to ): array {
 		global $wpdb;
 		$table = self::table();
 
@@ -145,10 +146,11 @@ class IAL_Query {
 			$wpdb->prepare(
 				"SELECT action, COUNT(*) AS event_count
 				 FROM `{$table}`
-				 WHERE created_at >= %s
+				 WHERE created_at >= %s AND created_at <= %s
 				 GROUP BY action
 				 ORDER BY event_count DESC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				self::since( $days )
+				$date_from . ' 00:00:00',
+				$date_to   . ' 23:59:59'
 			),
 			ARRAY_A
 		) ?: [];

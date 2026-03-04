@@ -3,7 +3,7 @@
  * Plugin Name: 			Internal Activity Log
  * Plugin URI:        https://github.com/edwinkrisnha/Internal-Activity-Log-Wordpress-Plugin
  * Description: 			Tracks and visualizes WordPress user activity with charts and detailed logs.
- * Version:     			1.0.1
+ * Version:     			1.0.2
  * Author:            Edwin Krisnha
  * Author URI:        https://github.com/edwinkrisnha
  * License:           GPLv2 or later
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IAL_VERSION',    '1.0.1' );
+define( 'IAL_VERSION',    '1.0.2' );
 define( 'IAL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IAL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'IAL_TABLE_NAME', 'activity_log' ); // used without $wpdb->prefix inside classes

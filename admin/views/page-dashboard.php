@@ -1,24 +1,80 @@
 <?php
 /**
- * Dashboard view — stat cards + Chart.js charts.
+ * Dashboard view — date range picker, stat cards, Chart.js charts.
  *
  * Variables available (set by IAL_Admin::render_dashboard()):
- *   $stats['total_events']      int
- *   $stats['active_today']      int
- *   $stats['most_active_user']  array|null  { user_id, username, event_count }
+ *   $range['date_from']        string    YYYY-MM-DD
+ *   $range['date_to']          string    YYYY-MM-DD
+ *   $range['presets']          array     quick-access preset definitions
+ *   $stats['total_events']     int
+ *   $stats['active_today']     int
+ *   $stats['most_active_user'] array|null
  */
 defined( 'ABSPATH' ) || exit;
+
+$base_url = admin_url( 'admin.php?page=ial-dashboard' );
 ?>
 <div class="wrap ial-wrap">
 
 	<h1><?php esc_html_e( 'Activity Log — Dashboard', 'internal-activity-log' ); ?></h1>
-	<p class="ial-subtitle"><?php esc_html_e( 'Last 30 days · all times in site timezone', 'internal-activity-log' ); ?></p>
+
+	<!-- ── Date range bar ──────────────────────────────────────────────── -->
+	<div class="ial-date-bar">
+
+		<!-- Quick-access preset links (always relative to today, server-side) -->
+		<div class="ial-date-presets">
+			<?php foreach ( $range['presets'] as $preset ) :
+				$is_active = ( $range['date_from'] === $preset['from'] && $range['date_to'] === $preset['to'] );
+				$url       = add_query_arg( [ 'date_from' => $preset['from'], 'date_to' => $preset['to'] ], $base_url );
+			?>
+				<a href="<?php echo esc_url( $url ); ?>"
+				   class="ial-preset-btn<?php echo $is_active ? ' ial-preset-btn--active' : ''; ?>">
+					<?php echo esc_html( $preset['label'] ); ?>
+				</a>
+			<?php endforeach; ?>
+		</div>
+
+		<!-- Custom date range form -->
+		<form method="get" class="ial-custom-range" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
+			<input type="hidden" name="page" value="ial-dashboard">
+			<label for="ial-date-from" class="screen-reader-text"><?php esc_html_e( 'From', 'internal-activity-log' ); ?></label>
+			<input
+				type="date"
+				id="ial-date-from"
+				name="date_from"
+				value="<?php echo esc_attr( $range['date_from'] ); ?>"
+				max="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>"
+			>
+			<span class="ial-range-sep" aria-hidden="true">–</span>
+			<label for="ial-date-to" class="screen-reader-text"><?php esc_html_e( 'To', 'internal-activity-log' ); ?></label>
+			<input
+				type="date"
+				id="ial-date-to"
+				name="date_to"
+				value="<?php echo esc_attr( $range['date_to'] ); ?>"
+				max="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>"
+			>
+			<?php submit_button( __( 'Apply', 'internal-activity-log' ), 'secondary small', 'apply_range', false ); ?>
+		</form>
+
+	</div><!-- .ial-date-bar -->
+
+	<p class="ial-subtitle">
+		<?php
+		printf(
+			/* translators: 1: start date, 2: end date */
+			'Showing <strong>%1$s</strong> – <strong>%2$s</strong> &middot; all times UTC',
+			esc_html( $range['date_from'] ),
+			esc_html( $range['date_to'] )
+		);
+		?>
+	</p>
 
 	<!-- ── Stat cards ──────────────────────────────────────────────────── -->
 	<div class="ial-stats-grid">
 
 		<div class="ial-stat-card">
-			<div class="ial-stat-label"><?php esc_html_e( 'Total Events', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-label"><?php esc_html_e( 'Total Events (all time)', 'internal-activity-log' ); ?></div>
 			<div class="ial-stat-value"><?php echo esc_html( number_format_i18n( $stats['total_events'] ) ); ?></div>
 		</div>
 
@@ -28,7 +84,7 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
 		<div class="ial-stat-card">
-			<div class="ial-stat-label"><?php esc_html_e( 'Most Active (30 d)', 'internal-activity-log' ); ?></div>
+			<div class="ial-stat-label"><?php esc_html_e( 'Most Active (selected range)', 'internal-activity-log' ); ?></div>
 			<?php if ( $stats['most_active_user'] ) : ?>
 				<div class="ial-stat-value ial-stat-value--sm">
 					<?php echo esc_html( $stats['most_active_user']['username'] ); ?>
@@ -72,7 +128,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<!-- Line: Daily activity -->
 		<div class="ial-chart-card ial-chart-card--wide">
-			<h3><?php esc_html_e( 'Daily Activity (Last 30 Days)', 'internal-activity-log' ); ?></h3>
+			<h3><?php esc_html_e( 'Daily Activity', 'internal-activity-log' ); ?></h3>
 			<div class="ial-chart-container ial-chart-container--short">
 				<canvas id="ial-chart-daily" aria-label="<?php esc_attr_e( 'Daily activity line chart', 'internal-activity-log' ); ?>" role="img"></canvas>
 			</div>
