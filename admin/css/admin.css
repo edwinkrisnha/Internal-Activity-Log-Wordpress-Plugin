@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Internal Activity Log — Admin styles
+   Scoped under .ial-wrap to avoid bleeding into core WP admin styles.
+   ========================================================================== */
+
+.ial-wrap {
+	max-width: 1400px;
+}
+
+.ial-subtitle {
+	color: #646970;
+	margin-top: -8px;
+	margin-bottom: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   Stat cards
+   -------------------------------------------------------------------------- */
+
+.ial-stats-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	margin: 20px 0 24px;
+}
+
+@media ( max-width: 960px ) {
+	.ial-stats-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.ial-stats-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ial-stat-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 20px 24px;
+}
+
+.ial-stat-label {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #646970;
+	margin-bottom: 8px;
+}
+
+.ial-stat-value {
+	font-size: 36px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1;
+}
+
+.ial-stat-value--sm {
+	font-size: 24px;
+}
+
+.ial-stat-sub {
+	margin-top: 4px;
+	font-size: 12px;
+	color: #646970;
+}
+
+/* --------------------------------------------------------------------------
+   Chart cards
+   -------------------------------------------------------------------------- */
+
+.ial-charts-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+@media ( max-width: 1100px ) {
+	.ial-charts-grid {
+		grid-template-columns: 1fr;
+	}
+	.ial-chart-card--wide {
+		grid-column: auto !important;
+	}
+}
+
+.ial-chart-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 20px 24px;
+	min-height: 300px;
+	display: flex;
+	flex-direction: column;
+}
+
+.ial-chart-card h3 {
+	margin: 0 0 16px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.ial-chart-card canvas {
+	flex: 1;
+}
+
+.ial-chart-card--wide {
+	grid-column: span 2;
+	min-height: 220px;
+}
+
+/* --------------------------------------------------------------------------
+   Action badges
+   -------------------------------------------------------------------------- */
+
+.ial-badge {
+	display: inline-block;
+	padding: 2px 7px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+}
+
+.ial-badge--success  { background: #d7f0d9; color: #135e16; }
+.ial-badge--info     { background: #d7e8f0; color: #003b6b; }
+.ial-badge--warning  { background: #fcf9e8; color: #6d4e00; border: 1px solid #f0d900; }
+.ial-badge--danger   { background: #fce8e8; color: #8c1c1c; }
+.ial-badge--neutral  { background: #f0f0f1; color: #646970; }
+
+/* --------------------------------------------------------------------------
+   Filters row
+   -------------------------------------------------------------------------- */
+
+.ial-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-end;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 14px 16px;
+	margin-bottom: 16px;
+}
+
+.ial-filter-group {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.ial-filter-group label {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #646970;
+}
+
+.ial-filter-group select,
+.ial-filter-group input[type="number"],
+.ial-filter-group input[type="date"] {
+	height: 30px;
+	line-height: 28px;
+}
+
+.ial-filter-group--actions {
+	flex-direction: row;
+	gap: 8px;
+	align-items: flex-end;
+}
+
+/* --------------------------------------------------------------------------
+   WP_List_Table tweaks
+   -------------------------------------------------------------------------- */
+
+.ial-wrap .wp-list-table code {
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 1px 5px;
+	border-radius: 2px;
+}
+
+.ial-wrap .wp-list-table time {
+	font-variant-numeric: tabular-nums;
+}
